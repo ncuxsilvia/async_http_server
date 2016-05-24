@@ -61,6 +61,16 @@ else()
   message(STATUS "Boost found.")
 endif()
 
+set(TARGET server)
 
+set(SOURCE_PATH ${PROJECT_SOURCE_DIR}/source)
 
-add_executable(main main.cpp)
+enumfiles(HDRS "${SOURCE_PATH}" ".h;.hpp;.hxx")
+enumfiles(SRCS "${SOURCE_PATH}" ".cpp")
+
+add_executable(
+  ${TARGET}
+    ${HDRS}
+    ${SRCS}
+)
+

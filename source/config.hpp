@@ -1,6 +1,8 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <boost/program_options.hpp>
+#include <syslog.h>
 
 
 
@@ -9,6 +11,20 @@ namespace server
   namespace config
   {
     typedef std::vector< std::string > string_array;
+
+    // log::severity - this is a temporary dummy
+    namespace log
+    {
+      enum class
+      severity {
+        trace,
+        debug,
+        info,
+        warning,
+        error,
+        fatal
+      };
+    } // namespace log
 
     struct settings
     {
