@@ -12,8 +12,25 @@ set(
 
 project(async_http_server)
 
+set(
+  CMAKE_MODULE_PATH
+    ${CMAKE_MODULE_PATH}
+    ${PROJECT_SOURCE_DIR}/cmake-module-ex
+)
+
+include(cxx11)
+include(enumfiles)
+
 find_package(Threads REQUIRED)
-find_package(Boost COMPONENTS thread REQUIRED)
+
+find_package(
+  Boost 
+    COMPONENTS 
+      system
+      program_options
+      thread
+  REQUIRED
+)
 
 set(
   CMAKE_ARCHIVE_OUTPUT_DIRECTORY  
@@ -44,6 +61,6 @@ else()
   message(STATUS "Boost found.")
 endif()
 
-message("CMAKE_BINARY_DIR: ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+
 
 add_executable(main main.cpp)
