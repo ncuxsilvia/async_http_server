@@ -18,8 +18,7 @@ set(
     ${PROJECT_SOURCE_DIR}/cmake-module-ex
 )
 
-include(cxx11)
-include(enumfiles)
+option(ENABLE_SERVER_TEST "Enable async_http_server test module" OFF)
 
 find_package(Threads REQUIRED)
 
@@ -31,6 +30,8 @@ find_package(
       thread
   REQUIRED
 )
+
+include(add_module)
 
 set(
   CMAKE_ARCHIVE_OUTPUT_DIRECTORY  
@@ -53,24 +54,24 @@ set(
     PATH "Directory where all executable files are dumped."
 )
 
-if(NOT Boost_FOUND)
-    message(SEND_ERROR "Failed to find boost::thread.")
-  return()
-else()
-  include_directories(${Boost_INCLUDE_DIRS})
-  message(STATUS "Boost found.")
-endif()
-
-set(TARGET server)
-
-set(SOURCE_PATH ${PROJECT_SOURCE_DIR}/source)
-
-enumfiles(HDRS "${SOURCE_PATH}" ".h;.hpp;.hxx")
-enumfiles(SRCS "${SOURCE_PATH}" ".cpp")
-
-add_executable(
-  ${TARGET}
-    ${HDRS}
-    ${SRCS}
+set(
+  SERVER_SOURCE_PATH
+    ${PROJECT_SOURCE_DIR}/source/server
 )
 
+#add_subdirectory(${SERVER_SOURCE_PATH})
+
+
+add_module(
+  NAMES
+    source/server
+  STATUS_SHORT_NAMES
+)
+
+add_module(
+  CONDITION
+    ENABLE_SERVER_TEST
+  NAMES
+    source/test
+  STATUS_SHORT_NAMES
+)
