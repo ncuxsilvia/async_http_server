@@ -20,8 +20,20 @@ add_executable(
     ${SRCS}
 )
 
-target_link_libraries(${TARGET} ${Boost_LIBRARIES})
-#target_link_libraries(${TARGET} pthread)
+target_link_libraries(
+    ${TARGET}
+        ${Boost_LIBRARIES}
+        ${CMAKE_THREAD_LIBS_INIT}
+        -lstdc++
+)
+
+if(UNIX)
+  set_target_properties(
+    ${TARGET}
+    PROPERTIES
+      COMPILE_FLAGS "-std=c++11"
+  )
+endif()
 
 enable_cxx11_support(${TARGET})
 

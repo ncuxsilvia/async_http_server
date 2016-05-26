@@ -16,13 +16,14 @@ namespace server
 
       if (action_code == config::action::run)
       {
-        // create server class, and start them
+        std::cout << "run server ..." << std::endl;
+          // create server class, and start them
       }
       return 0;
     }
-    catch(...) // add processing different exception (e.g.: config, server, log, etc..)
+    catch(std::exception const& ex) // add processing different exception (e.g.: config, server, log, etc..)
     {
-
+      std::cout << ex.what () << std::endl;
     }
     return -1;
   }

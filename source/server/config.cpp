@@ -74,7 +74,7 @@ namespace server
 //            )
             (
               "listen-address,A",
-              po::value<std::string>(conf ? &conf->listen_addr : 0),
+              po::value<std::string>(conf ? &conf->listen_addr : 0)->required (),
               "HTTP server listen address."
             )
             (
@@ -154,21 +154,12 @@ namespace server
         }
 
         // error: multiple actions at the same time
-        bool empty = true;
         std::string emessage("Actions ambiguity detected. Which actions to apply ");
-        if (swch & make_help)
+        if (swch == (make_run | make_help))
         {
-          emessage += "'--help'";
-          empty = false;
-        }
-        if(swch & make_run)
-        {
-          if(!empty)
-          {
-            emessage += ", ";
-          }
+          emessage += "'--help'";          
           emessage += "'--run'";
-          empty = false;
+          //empty = false;
         }
         emessage += "? Only one is allowed at the same time.";
         throw std::runtime_error(emessage);
@@ -177,6 +168,7 @@ namespace server
       {
         // something actions for process exception
         std::cout << ex.what() << std::endl;
+        //std::rethrow_exception(ex);
       }
       return action::error;
     }
