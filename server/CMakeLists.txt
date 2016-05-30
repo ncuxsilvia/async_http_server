@@ -14,6 +14,8 @@ endif()
 enumfiles(HDRS "${PROJECT_SOURCE_DIR}" ".h;.hpp;.hxx")
 enumfiles(SRCS "${PROJECT_SOURCE_DIR}" ".cpp")
 
+
+message("=================  ${SOURCE_INCLUDE}")
 include_directories (${SOURCE_INCLUDE})
 
 add_executable(

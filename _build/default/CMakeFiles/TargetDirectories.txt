@@ -1,2 +1,0 @@
-/home/viktor/async_http_server/_build/default/http-header/CMakeFiles/http-header.dir
-/home/viktor/async_http_server/_build/default/server/CMakeFiles/server.dir

@@ -1,12 +1,12 @@
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
 
-#define BOOST_LOG_DYN_LINK
-
+#include <iostream>
+#include <memory>
 #include <string>
 #include <thread>
+#include <type_traits>
 #include <boost/program_options.hpp>
-#include <boost/log/trivial.hpp>
 
 namespace server
 {
@@ -21,17 +21,28 @@ namespace server
       }; // enum <type>
     } // namespace <action>
 
-    namespace log = boost::log::trivial;
-    typedef boost::log::trivial::severity_level severity;
-
+    // log::severity - this is a temporary dummy
+    namespace log
+    {
+      enum class
+      severity : unsigned
+      {
+        trace,
+        debug,
+        info,
+        warning,
+        error,
+        fatal
+      };
+    } // namespace log
 
     namespace defaults
     {
-      static severity       default_log_level     = log::info;
+      static log::severity  default_log_level     = log::severity::info;
       static std::string    default_host_name     = "";
       static std::string    default_listen_addr   = "127.0.0.1";
       static uint16_t       default_listen_port   = 80;
-      static uint16_t       default_thread_count  = std::thread::hardware_concurrency() * 2;
+      static uint16_t       default_thread_count  = std::thread::hardware_concurrency();
     } // namecpace <defaults>
 
     typedef std::vector<std::string> string_array;
@@ -41,8 +52,8 @@ namespace server
     {
       settings();
       // [logging]
-      std::string           log_path;
-      severity              log_level;
+      //std::string           log_path;
+      log::severity         log_level;
 
       // [network]
       std::string           host_name;

@@ -12,16 +12,14 @@ namespace server
     static
     int main(int ac, char* av[]);
 
-    xserver(config::string_array const& args) : args_(args) {};
+    xserver(config::string_array const& args);
 
 
     // ...
 
   private:
-    int init();
 
     bool read_options();
-    void apply_options();
 
     config::string_array    args_;
     config::settings        conf_;
