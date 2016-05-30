@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+   <FileVersion major="1" minor="6" />
+   <Project>
+      <Option title="http-header" />
+      <Option makefile_is_custom="1" />
+      <Option compiler="gcc" />
+      <Option virtualFolders="CMake Files\;CMake Files\cmake-overrides\;CMake Files\cmake-module-ex\;CMake Files\server\;CMake Files\http-header\;" />
+      <Build>
+      <Target title="all">
+         <Option working_dir="/home/viktor/async_http_server/_build/debug/http-header" />
+         <Option type="4" />
+         <MakeCommands>
+            <Build command="/usr/bin/gmake -f &quot;/home/viktor/async_http_server/_build/debug/http-header/Makefile&quot;  VERBOSE=1 all" />
+            <CompileFile command="/usr/bin/gmake -f &quot;/home/viktor/async_http_server/_build/debug/http-header/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/gmake -f &quot;/home/viktor/async_http_server/_build/debug/http-header/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/gmake -f &quot;/home/viktor/async_http_server/_build/debug/http-header/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="http-header">
+         <Option output="/home/viktor/async_http_server/_build/debug/lib/libhttp-header.a" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/home/viktor/async_http_server/_build/debug/http-header" />
+         <Option object_output="./" />
+         <Option type="2" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add directory="/usr/include" />
+            <Add directory="/usr/lib/gcc/x86_64-redhat-linux/4.9.2/../../../../include/c++/4.9.2" />
+            <Add directory="/usr/lib/gcc/x86_64-redhat-linux/4.9.2/../../../../include/c++/4.9.2/backward" />
+            <Add directory="/usr/lib/gcc/x86_64-redhat-linux/4.9.2/../../../../include/c++/4.9.2/x86_64-redhat-linux" />
+            <Add directory="/usr/lib/gcc/x86_64-redhat-linux/4.9.2/include" />
+            <Add directory="/usr/local/include" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/gmake -f &quot;/home/viktor/async_http_server/_build/debug/http-header/Makefile&quot;  VERBOSE=1 http-header" />
+            <CompileFile command="/usr/bin/gmake -f &quot;/home/viktor/async_http_server/_build/debug/http-header/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/gmake -f &quot;/home/viktor/async_http_server/_build/debug/http-header/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/gmake -f &quot;/home/viktor/async_http_server/_build/debug/http-header/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      <Target title="http-header/fast">
+         <Option output="/home/viktor/async_http_server/_build/debug/lib/libhttp-header.a" prefix_auto="0" extension_auto="0" />
+         <Option working_dir="/home/viktor/async_http_server/_build/debug/http-header" />
+         <Option object_output="./" />
+         <Option type="2" />
+         <Option compiler="gcc" />
+         <Compiler>
+            <Add directory="/usr/include" />
+            <Add directory="/usr/lib/gcc/x86_64-redhat-linux/4.9.2/../../../../include/c++/4.9.2" />
+            <Add directory="/usr/lib/gcc/x86_64-redhat-linux/4.9.2/../../../../include/c++/4.9.2/backward" />
+            <Add directory="/usr/lib/gcc/x86_64-redhat-linux/4.9.2/../../../../include/c++/4.9.2/x86_64-redhat-linux" />
+            <Add directory="/usr/lib/gcc/x86_64-redhat-linux/4.9.2/include" />
+            <Add directory="/usr/local/include" />
+         </Compiler>
+         <MakeCommands>
+            <Build command="/usr/bin/gmake -f &quot;/home/viktor/async_http_server/_build/debug/http-header/Makefile&quot;  VERBOSE=1 http-header/fast" />
+            <CompileFile command="/usr/bin/gmake -f &quot;/home/viktor/async_http_server/_build/debug/http-header/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
+            <Clean command="/usr/bin/gmake -f &quot;/home/viktor/async_http_server/_build/debug/http-header/Makefile&quot;  VERBOSE=1 clean" />
+            <DistClean command="/usr/bin/gmake -f &quot;/home/viktor/async_http_server/_build/debug/http-header/Makefile&quot;  VERBOSE=1 clean" />
+         </MakeCommands>
+      </Target>
+      </Build>
+      <Unit filename="/home/viktor/async_http_server/http-header/http_header_parser.cpp">
+      </Unit>
+      <Unit filename="/home/viktor/async_http_server/http-header/http_header_parser.hpp">
+      </Unit>
+      <Unit filename="/home/viktor/async_http_server/CMakeLists.txt">
+          <Option virtualFolder="CMake Files\" />
+      </Unit>
+      <Unit filename="/home/viktor/async_http_server/cmake-overrides/c_flag.cmake">
+          <Option virtualFolder="CMake Files\cmake-overrides\" />
+      </Unit>
+      <Unit filename="/home/viktor/async_http_server/cmake-overrides/c_flag.cmake">
+          <Option virtualFolder="CMake Files\cmake-overrides\" />
+      </Unit>
+      <Unit filename="/home/viktor/async_http_server/cmake-overrides/cxx_flag.cmake">
+          <Option virtualFolder="CMake Files\cmake-overrides\" />
+      </Unit>
+      <Unit filename="/home/viktor/async_http_server/cmake-module-ex/add_module.cmake">
+          <Option virtualFolder="CMake Files\cmake-module-ex\" />
+      </Unit>
+      <Unit filename="/home/viktor/async_http_server/cmake-module-ex/cxx11.cmake">
+          <Option virtualFolder="CMake Files\cmake-module-ex\" />
+      </Unit>
+      <Unit filename="/home/viktor/async_http_server/cmake-module-ex/enumfiles.cmake">
+          <Option virtualFolder="CMake Files\cmake-module-ex\" />
+      </Unit>
+      <Unit filename="/home/viktor/async_http_server/cmake-module-ex/cxx11.cmake">
+          <Option virtualFolder="CMake Files\cmake-module-ex\" />
+      </Unit>
+      <Unit filename="/home/viktor/async_http_server/cmake-module-ex/enumfiles.cmake">
+          <Option virtualFolder="CMake Files\cmake-module-ex\" />
+      </Unit>
+      <Unit filename="/home/viktor/async_http_server/cmake-module-ex/cxx11.cmake">
+          <Option virtualFolder="CMake Files\cmake-module-ex\" />
+      </Unit>
+      <Unit filename="/home/viktor/async_http_server/cmake-module-ex/enumfiles.cmake">
+          <Option virtualFolder="CMake Files\cmake-module-ex\" />
+      </Unit>
+      <Unit filename="/home/viktor/async_http_server/cmake-module-ex/cxx11.cmake">
+          <Option virtualFolder="CMake Files\cmake-module-ex\" />
+      </Unit>
+      <Unit filename="/home/viktor/async_http_server/cmake-module-ex/enumfiles.cmake">
+          <Option virtualFolder="CMake Files\cmake-module-ex\" />
+      </Unit>
+      <Unit filename="/home/viktor/async_http_server/server/CMakeLists.txt">
+          <Option virtualFolder="CMake Files\server\" />
+      </Unit>
+      <Unit filename="/home/viktor/async_http_server/server/CMakeLists.txt">
+          <Option virtualFolder="CMake Files\server\" />
+      </Unit>
+      <Unit filename="/home/viktor/async_http_server/http-header/CMakeLists.txt">
+          <Option virtualFolder="CMake Files\http-header\" />
+      </Unit>
+      <Unit filename="/home/viktor/async_http_server/http-header/CMakeLists.txt">
+          <Option virtualFolder="CMake Files\http-header\" />
+      </Unit>
+   </Project>
+</CodeBlocks_project_file>

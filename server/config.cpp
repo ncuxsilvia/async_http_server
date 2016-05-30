@@ -1,8 +1,11 @@
+#define BOOST_LOG_DYN_LINK
+
 #include <iostream>
 #include <exception>
 #include <boost/system/error_code.hpp>
 #include <boost/asio.hpp>
 #include <boost/program_options.hpp>
+#include <boost/filesystem.hpp>
 
 #include "config.hpp"
 
@@ -13,6 +16,7 @@ namespace server
     namespace asio    = boost::asio;
     namespace system  = boost::system;
     namespace po      = boost::program_options;
+    namespace fs      = boost::filesystem;
     using               boost::asio::ip::tcp;
 
     string_array collect(int ac, char* av[])
@@ -33,7 +37,6 @@ namespace server
       catch(po::error const& ex)
       { // rethrow error...
         throw ex;
-          //util::throw_error<config::error>(ex.what());
       }
       return args;
     }
@@ -41,13 +44,41 @@ namespace server
     settings::settings()
       : netaddr(0)
     {      
+      asio::io_service  ios;
+      system::error_code dummy;
+      host_name = asio::ip::host_name(dummy);
+
+      asio::ip::tcp::resolver::query query(
+        asio::ip::tcp::v4(),
+        host_name,
+        ""
+      );
+
+      for(asio::ip::tcp::resolver::iterator it =
+          asio::ip::tcp::resolver(ios).resolve(query);
+          it != asio::ip::tcp::resolver::iterator();
+          ++it)
+      {
+        asio::ip::address xaddr(
+          it->endpoint().address()
+        );
+
+        std::string addr = xaddr.to_v4().to_string();
+
+        if(!xaddr.is_loopback() && !xaddr.is_multicast() && !xaddr.is_unspecified())
+        {
+
+          //break;
+        }
+      }
+
       reset();
     }
 
     void settings::reset()
     {
+      log_path  = fs::current_path().string();
       log_level = defaults::default_log_level;
-      host_name = defaults::default_host_name;
       listen_addr = defaults::default_listen_addr;
       listen_port = defaults::default_listen_port;
       thread_count = defaults::default_thread_count;
@@ -67,11 +98,11 @@ namespace server
       po::options_description& server_runopts(po::options_description &desc, settings *conf)
       {
         desc.add_options()
-//            (
-//              "log-level,l",
-//              po::value<log::severity>(conf ? &conf->log_level : 0)->default_value(defaults::default_log_level, "info"),
-//              "Logging level.\nPossible values: critical, error, warning, info, debug, trace."
-//            )
+            (
+              "log-level,l",
+              po::value<severity>(conf ? &conf->log_level : 0)->default_value(defaults::default_log_level, "info"),
+              "Logging level.\nPossible values: critical, error, warning, info, debug, trace."
+            )
             (
               "listen-address,A",
               po::value<std::string>(conf ? &conf->listen_addr : 0)->required (),

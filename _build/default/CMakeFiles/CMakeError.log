@@ -1,0 +1,57 @@
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /home/viktor/async_http_server/_build/default/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/gmake" "cmTryCompileExec3549456340/fast"
+/usr/bin/gmake -f CMakeFiles/cmTryCompileExec3549456340.dir/build.make CMakeFiles/cmTryCompileExec3549456340.dir/build
+gmake[1]: вход в каталог «/home/viktor/async_http_server/_build/default/CMakeFiles/CMakeTmp»
+/usr/bin/cmake -E cmake_progress_report /home/viktor/async_http_server/_build/default/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec3549456340.dir/CheckSymbolExists.c.o
+/usr/lib64/ccache/cc    -o CMakeFiles/cmTryCompileExec3549456340.dir/CheckSymbolExists.c.o   -c /home/viktor/async_http_server/_build/default/CMakeFiles/CMakeTmp/CheckSymbolExists.c
+Linking C executable cmTryCompileExec3549456340
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec3549456340.dir/link.txt --verbose=1
+/usr/lib64/ccache/cc       CMakeFiles/cmTryCompileExec3549456340.dir/CheckSymbolExists.c.o  -o cmTryCompileExec3549456340 -rdynamic 
+CMakeFiles/cmTryCompileExec3549456340.dir/CheckSymbolExists.c.o: In function `main':
+CheckSymbolExists.c:(.text+0x16): undefined reference to `pthread_create'
+collect2: ошибка: выполнение ld завершилось с кодом возврата 1
+CMakeFiles/cmTryCompileExec3549456340.dir/build.make:88: ошибка выполнения рецепта для цели «cmTryCompileExec3549456340»
+gmake[1]: выход из каталога «/home/viktor/async_http_server/_build/default/CMakeFiles/CMakeTmp»
+gmake[1]: *** [cmTryCompileExec3549456340] Ошибка 1
+Makefile:118: ошибка выполнения рецепта для цели «cmTryCompileExec3549456340/fast»
+gmake: *** [cmTryCompileExec3549456340/fast] Ошибка 2
+
+File /home/viktor/async_http_server/_build/default/CMakeFiles/CMakeTmp/CheckSymbolExists.c:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /home/viktor/async_http_server/_build/default/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/gmake" "cmTryCompileExec99621146/fast"
+/usr/bin/gmake -f CMakeFiles/cmTryCompileExec99621146.dir/build.make CMakeFiles/cmTryCompileExec99621146.dir/build
+gmake[1]: вход в каталог «/home/viktor/async_http_server/_build/default/CMakeFiles/CMakeTmp»
+/usr/bin/cmake -E cmake_progress_report /home/viktor/async_http_server/_build/default/CMakeFiles/CMakeTmp/CMakeFiles 1
+Building C object CMakeFiles/cmTryCompileExec99621146.dir/CheckFunctionExists.c.o
+/usr/lib64/ccache/cc   -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTryCompileExec99621146.dir/CheckFunctionExists.c.o   -c /usr/share/cmake/Modules/CheckFunctionExists.c
+Linking C executable cmTryCompileExec99621146
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTryCompileExec99621146.dir/link.txt --verbose=1
+/usr/lib64/ccache/cc   -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTryCompileExec99621146.dir/CheckFunctionExists.c.o  -o cmTryCompileExec99621146 -rdynamic -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: ошибка: выполнение ld завершилось с кодом возврата 1
+CMakeFiles/cmTryCompileExec99621146.dir/build.make:88: ошибка выполнения рецепта для цели «cmTryCompileExec99621146»
+gmake[1]: *** [cmTryCompileExec99621146] Ошибка 1
+gmake[1]: выход из каталога «/home/viktor/async_http_server/_build/default/CMakeFiles/CMakeTmp»
+Makefile:118: ошибка выполнения рецепта для цели «cmTryCompileExec99621146/fast»
+gmake: *** [cmTryCompileExec99621146/fast] Ошибка 2
+
+
