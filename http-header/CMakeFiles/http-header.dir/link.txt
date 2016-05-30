@@ -1,2 +1,0 @@
-/usr/bin/ar cr /lib/libhttp-header.a  CMakeFiles/http-header.dir/http_header_parser.cpp.o
-/usr/bin/ranlib /lib/libhttp-header.a
