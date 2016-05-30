@@ -28,6 +28,10 @@ find_package(
       system
       program_options
       thread
+      log
+      log_setup
+      filesystem
+      date_time
   REQUIRED
 )
 

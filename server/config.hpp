@@ -52,7 +52,7 @@ namespace server
     {
       settings();
       // [logging]
-      //std::string           log_path;
+      std::string           log_path;
       log::severity         log_level;
 
       // [network]
