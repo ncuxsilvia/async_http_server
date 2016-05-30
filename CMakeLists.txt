@@ -33,38 +33,37 @@ find_package(
 
 include(add_module)
 
+set(PROJECT)
+
 set(
   CMAKE_ARCHIVE_OUTPUT_DIRECTORY  
-    ${PROJECTS_BINARY_DIR}/lib
+    ${CMAKE_BINARY_DIR}/lib
   CACHE
     INTERNAL "Directory where all .lib|.a files are dumped."
 )
 
 set(
   CMAKE_LIBRARY_OUTPUT_DIRECTORY
-    ${PROJECT_BINARY_DIR}/lib
+    ${CMAKE_BINARY_DIR}/lib
   CACHE
     PATH "Directory where all .so files are dumped (if necessary)"
 )
 
 set(
   CMAKE_RUNTIME_OUTPUT_DIRECTORY
-    ${PROJECT_BINARY_DIR}/bin
+    ${CMAKE_BINARY_DIR}/bin
   CACHE
     PATH "Directory where all executable files are dumped."
 )
 
-set(
-  SERVER_SOURCE_PATH
-    ${PROJECT_SOURCE_DIR}/source/server
+set(SOURCE_INCLUDE
+    ${PROJECT_SOURCE_DIR}
 )
-
-#add_subdirectory(${SERVER_SOURCE_PATH})
-
 
 add_module(
   NAMES
-    source/server
+    server
+    http-header
   STATUS_SHORT_NAMES
 )
 
@@ -72,6 +71,6 @@ add_module(
   CONDITION
     ENABLE_SERVER_TEST
   NAMES
-    source/test
+    test
   STATUS_SHORT_NAMES
 )
