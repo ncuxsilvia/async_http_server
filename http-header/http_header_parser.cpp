@@ -21,23 +21,20 @@ namespace server {
 
     template <typename iterator_type>
     struct http_url_grammar: qi::grammar <iterator_type, http_url_type()> {
-        http_url_grammar() : http_url_grammar::base_type(uri, "http url grammar") {
+      http_url_grammar() : http_url_grammar::base_type(uri, "http url grammar")
+      {
+        host   = +qi::char_("0-9a-zA-Z-.");
+        port   = +qi::digit;
+        path   = +~qi::char_('?');
+        query_key     = +qi::char_("0-9a-zA-Z-");
+        query_value   = +~qi::char_('&');
+        queries = *(query_key >> -qi::omit['='] >> -query_value >> -qi::char_('&'));
 
-          host   = +qi::char_("0-9a-zA-Z-.");
-          port   = +qi::digit;
-          path   = +~qi::char_('?');
-
-
-          query_key     = +qi::char_("0-9a-zA-Z-");
-          query_value   = +~qi::char_('&');
-
-          queries = *(query_key >> -qi::omit['='] >> -query_value >> -qi::char_('&'));
-
-          uri = -qi::lexeme["http://"] >> host >> -qi::omit[':'] >>-port >> -path >> -qi::omit['?'] >> -queries;
+        uri = -qi::lexeme["http://"] >> host >> -qi::omit[':'] >>-port >> -path >> -qi::omit['?'] >> -queries;
 #ifdef _DEBUG
-          BOOST_SPIRIT_DEBUG_NODES((host)(port)(path)(query_key)(query_value)(queries)(uri))
+        BOOST_SPIRIT_DEBUG_NODES((host)(port)(path)(query_key)(query_value)(queries)(uri))
 #endif
-        }
+      }
 
       private:
         typedef qi::rule<iterator_type, std::string()>                    rule_type;
@@ -46,7 +43,6 @@ namespace server {
 
         query_rule_type         queries;
         main_rule_type          uri;
-
         // qi::lexemes
         rule_type   host;
         rule_type   port;
@@ -58,21 +54,22 @@ namespace server {
 
     template <typename iterator, typename skipper = qi::ascii::blank_type>
     struct http_header_grammar: qi::grammar <iterator, http_request_header_type(), skipper> {
-        http_header_grammar() : http_header_grammar::base_type(http_header, "HttpHeaderGrammar Grammar") {
-            method        = +qi::alpha;
-            uri           = +qi::graph;
-            http_ver      = "HTTP/" >> +qi::char_("0-9.");
+      http_header_grammar() : http_header_grammar::base_type(http_header, "HttpHeaderGrammar Grammar")
+      {
+        method        = +qi::alpha;
+        uri           = +qi::graph;
+        http_ver      = "HTTP/" >> +qi::char_("0-9.");
 
-            field_key     = +qi::char_("0-9a-zA-Z-");
-            field_value   = +~qi::char_("\r\n");
+        field_key     = +qi::char_("0-9a-zA-Z-");
+        field_value   = +~qi::char_("\r\n");
 
-            fields = *(field_key >> ':' >> field_value >> qi::lexeme["\r\n"]);
+        fields = *(field_key >> ':' >> field_value >> qi::lexeme["\r\n"]);
 
-            http_header = method >> uri >> http_ver >> qi::lexeme["\r\n"] >> fields;
+        http_header = method >> uri >> http_ver >> qi::lexeme["\r\n"] >> fields;
 #ifdef _DEBUG
-            BOOST_SPIRIT_DEBUG_NODES((method)(uri)(http_ver)(fields)(http_header))
+        BOOST_SPIRIT_DEBUG_NODES((method)(uri)(http_ver)(fields)(http_header))
 #endif
-        }
+      }
 
       private:
         typedef qi::rule<iterator, std::string()> rule_type;
@@ -109,7 +106,6 @@ namespace server {
 
       return qi::parse(first, last, url_grammar, http_url) && first == last;
     }
-
-  }
-}
+  } // namespace <server>
+} // namespace <http>
 

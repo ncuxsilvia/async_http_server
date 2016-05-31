@@ -1,12 +1,13 @@
 #ifndef CONFIG_HPP
 #define CONFIG_HPP
-
 #include <iostream>
 #include <memory>
 #include <string>
 #include <thread>
 #include <type_traits>
 #include <boost/program_options.hpp>
+
+#include <boost/log/trivial.hpp>
 
 namespace server
 {
@@ -21,28 +22,16 @@ namespace server
       }; // enum <type>
     } // namespace <action>
 
-    // log::severity - this is a temporary dummy
-    namespace log
-    {
-      enum class
-      severity : unsigned
-      {
-        trace,
-        debug,
-        info,
-        warning,
-        error,
-        fatal
-      };
-    } // namespace log
+
+    using boost::log::trivial::severity_level;
 
     namespace defaults
     {
-      static log::severity  default_log_level     = log::severity::info;
+      static severity_level  default_log_level    = severity_level::info;
       static std::string    default_host_name     = "";
       static std::string    default_listen_addr   = "127.0.0.1";
-      static uint16_t       default_listen_port   = 80;
-      static uint16_t       default_thread_count  = std::thread::hardware_concurrency();
+      static std::string    default_listen_port   = "8080";
+      static uint16_t       default_thread_count  = std::thread::hardware_concurrency() * 2;
     } // namecpace <defaults>
 
     typedef std::vector<std::string> string_array;
@@ -50,16 +39,17 @@ namespace server
 
     struct settings
     {
+
+
       settings();
       // [logging]
       std::string           log_path;
-      log::severity         log_level;
+      severity_level        log_level;
 
       // [network]
-      std::string           host_name;
-      unsigned int          netaddr;
+      std::string           host_name;      
       std::string           listen_addr;
-      uint16_t              listen_port;
+      std::string           listen_port;
 
       // [multithreading]
       unsigned int          thread_count;

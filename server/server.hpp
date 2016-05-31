@@ -1,30 +1,55 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
+#include <boost/asio.hpp>
+#include <boost/system/error_code.hpp>
+
 #include "config.hpp"
 
 namespace server
 {
-  class xserver
+  namespace system  = boost::system;
+  namespace asio    = boost::asio;
+  namespace ip      = asio::ip;
+
+  class xserver : boost::noncopyable
   {
   public:
+    // main section
+    xserver(config::string_array const& args);
 
-    static
+  static
     int main(int ac, char* av[]);
+    int start();
 
-    xserver(config::string_array const& args) : args_(args) {};
+    //
 
+    // handlers section
+    void handle_accept(const system::error_code& ec);
+    void handle_stop();
 
-    // ...
-    int init();
   private:
+    int init();
+    //int run();
+    int listen();
+    void do_accept();
 
 
     bool read_options();
     void apply_options();
 
+  private:
+    // config part
     config::string_array    args_;
     config::settings        conf_;
+
+    // network part
+    asio::io_service        ios_;
+    ip::tcp::acceptor       acceptor_;
+    ip::tcp::socket         socket_;
+
+    // signals part
+    asio::signal_set        signals_;
   };
 }
 

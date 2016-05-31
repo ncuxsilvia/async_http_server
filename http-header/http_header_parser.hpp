@@ -14,7 +14,6 @@ namespace server{
       std::string     host;
       std::string     port;
       std::string     path;
-
       query_map_type  query_map;
     };
 

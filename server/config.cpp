@@ -1,8 +1,11 @@
+#define BOOST_LOG_DYN_LINK
 #include <iostream>
 #include <exception>
 #include <boost/system/error_code.hpp>
 #include <boost/asio.hpp>
 #include <boost/program_options.hpp>
+#include <boost/filesystem.hpp>
+#include <boost/system/error_code.hpp>
 
 #include "config.hpp"
 
@@ -13,7 +16,8 @@ namespace server
     namespace asio    = boost::asio;
     namespace system  = boost::system;
     namespace po      = boost::program_options;
-    using               boost::asio::ip::tcp;
+    namespace fs      = boost::filesystem;
+    using               boost::asio::ip::tcp;    
 
     string_array collect(int ac, char* av[])
     {
@@ -32,20 +36,25 @@ namespace server
       }
       catch(po::error const& ex)
       { // rethrow error...
-        throw ex;
-          //util::throw_error<config::error>(ex.what());
+        throw ex;          
       }
       return args;
     }
 
     settings::settings()
-      : netaddr(0)
     {      
       reset();
     }
 
     void settings::reset()
     {
+      {
+        system::error_code ec;
+        log_path  = fs::current_path(ec).string();
+        if (ec)
+          std::cerr << "[error] :" << ec.message();
+      }
+
       log_level = defaults::default_log_level;
       host_name = defaults::default_host_name;
       listen_addr = defaults::default_listen_addr;
@@ -67,19 +76,24 @@ namespace server
       po::options_description& server_runopts(po::options_description &desc, settings *conf)
       {
         desc.add_options()
-//            (
-//              "log-level,l",
-//              po::value<log::severity>(conf ? &conf->log_level : 0)->default_value(defaults::default_log_level, "info"),
-//              "Logging level.\nPossible values: critical, error, warning, info, debug, trace."
-//            )
             (
-              "listen-address,A",
+              "log-path,O",
+              po::value<std::string>(conf ? &conf->log_path : 0),
+              "Path for log files (defuault is current directory)."
+            )
+            (
+              "log-level,L",
+              po::value<severity_level>(conf ? &conf->log_level : 0)->default_value(defaults::default_log_level, "info"),
+              "Logging level.\nPossible values: critical, error, warning, info, debug, trace."
+            )
+            (
+              "listen-address,l",
               po::value<std::string>(conf ? &conf->listen_addr : 0)->required (),
               "HTTP server listen address."
             )
             (
               "port,p",
-              po::value<uint16_t>(conf ? &conf->listen_port : 0)->default_value(defaults::default_listen_port),
+              po::value<std::string>(conf ? &conf->listen_port : 0)->default_value(defaults::default_listen_port),
               "HTTP server listen port."
             )
             (
