@@ -5,6 +5,7 @@
 #include <memory>
 #include <boost/asio.hpp>
 #include <boost/system/error_code.hpp>
+#include <boost/asio/deadline_timer.hpp>
 
 #include "http-header/http_header_parser.hpp"
 
@@ -41,22 +42,24 @@ namespace server {
       void do_read();
       void do_write();
 
-      void handle_request(
+      // handlers
+      void on_read(
         const system::error_code &ecode,
         std::size_t byte_count
       );
 
+
+
+    private:
+      typedef std::array<char, 16384> buffer_type;
+
       boost::asio::ip::tcp::socket  socket_;
       session_manager&              session_manager_;
-
-      //request_handler&              request_handler_;
-
-      std::array<char, 16384>       buffer_;
+      buffer_type                   buffer_;
       file_pointer                  file_;
-//      asio::streambuf                 buffer_;
 
-      //http_request_header_type      request_;
-      //reply                         reply_;
+      asio::deadline_timer          io_timer_;
+
     };
 
 

@@ -17,7 +17,7 @@ namespace server
     namespace system  = boost::system;
     namespace po      = boost::program_options;
     namespace fs      = boost::filesystem;
-    using               boost::asio::ip::tcp;    
+    using               boost::asio::ip::tcp;        
 
     string_array collect(int ac, char* av[])
     {
@@ -50,9 +50,12 @@ namespace server
     {
       {
         system::error_code ec;
-        log_path  = fs::current_path(ec).string();
-        if (ec)
+        std::string path  = fs::current_path(ec).string();
+        if (!ec)
+          log_path = root = path;
+        else
           std::cerr << "[error] :" << ec.message();
+
       }
 
       log_level = defaults::default_log_level;
@@ -100,6 +103,11 @@ namespace server
               "thread-count,t",
               po::value<unsigned int>(conf ? &conf->thread_count : 0)->default_value(defaults::default_thread_count),
               "How many threads will be run.\nNotice: it is not recommended to specify more than N*2 threads, where N is the number of cores."
+            )
+            (
+              "static-root,s",
+              po::value<std::string>(conf ? &conf->root : 0)->default_value(conf ? conf->log_path : ""),
+              "Path to static files."
             );
 
         return desc;

@@ -3,6 +3,7 @@
 #include <array>
 #include <boost/bind.hpp>
 #include <fstream>
+#include <tuple>
 
 #include "session.hpp"
 #include "session_manager.hpp"
@@ -58,7 +59,8 @@ namespace server {
         session_manager& manager
     ) : socket_(std::move(socket)),
         session_manager_(manager),
-        file_(0)
+        file_(0),
+        io_timer_(socket_.get_io_service())
         //, ...
     {}
 
@@ -77,7 +79,7 @@ namespace server {
       socket_.async_read_some(
         asio::buffer (buffer_),
         boost::bind(
-          &session::handle_request,
+          &session::on_read,
           shared_from_this (),
           ph::error,
           ph::bytes_transferred
@@ -90,13 +92,21 @@ namespace server {
 
     }
 
-    void session::handle_request(const system::error_code &ecode, std::size_t bytes_transferred)
+    void session::on_read(const system::error_code &ecode, std::size_t bytes_transferred)
     {
       if (!ecode)
       {
-        http_request_header_type header;
-        if (parse_http_header (std::string(buffer_.data (), buffer_.data() + bytes_transferred), header))
+        http_request_header header;
+        std::string raw_data(buffer_.data (), buffer_.data() + bytes_transferred);
+
+        bool result;
+        std::string::const_iterator at;
+        std::tie(result, at) = parse_http_header (raw_data, header);
+
+        if (result && at == raw_data.end())
         {
+          // handling request, open file if exists, and and space into space
+          //
           do_read();
         }
         else

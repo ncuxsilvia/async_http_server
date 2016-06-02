@@ -2,120 +2,176 @@
 #include <string>
 #include "catch.hpp"
 #include "http-header/http_header_parser.hpp"
+#include "test_data.hpp"
 
 namespace server {
-  namespace http {
+  namespace test {
 
-    enum {
-      host = 0,
-      user_agent,
-      accept,
-      accept_language,
-      accept_encoding,
-      accept_charset,
-      keep_alive,
-      connection,
-      cookie,
-      pragma,
-      cache_control
-    };
+    using server::http::http_request_header;
+    using server::http::http_url_type;
+    using namespace data;
 
-    std::vector<std::string> field_list
-    {
-      {"Host"},
-      {"User-Agent"},
-      {"Accept"},
-      {"Accept-Language"},
-      {"Accept-Encoding"},
-      {"Accept-Charset"},
-      {"Keep-Alive"},
-      {"Connection"},
-      {"Cookie"},
-      {"Pragma"},
-      {"Cache-Control"}
-    };
+    TEST_CASE("Тестим парсер заголовков, complete ", "[complete]" ) {
 
-    std::vector<std::string> value_list
-    {
-      {"net.tutsplus.com"},
-      {"Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5 (.NET CLR 3.5.30729)"},
-      {"text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"},
-      {"en-us,en;q=0.5"},
-      {"gzip,deflate"},
-      {"ISO-8859-1,utf-8;q=0.7,*;q=0.7"},
-      {"300"},
-      {"keep-alive"},
-      {"PHPSESSID=r2t5uvjq435r4q7ib3vtdjq120"},
-      {"no-cache"},
-      {"no-cache"}
-    };
+      http_request_header       header;
 
-    http_request_header_type header;
-    http_url_type            url;
+      SECTION("Результат парсинга, complete") {
 
-    std::string header_text =
-        "GET http://www.example.com:8080/path/to/file?query1=1&query2=2 HTTP/1.1\r\n"                                                     // method, uri, http version
-        "Host: net.tutsplus.com\r\n"                                                                                                      // field 1
-        "User-Agent: Mozilla/5.0 (Windows; U; Windows NT 6.1; en-US; rv:1.9.1.5) Gecko/20091102 Firefox/3.5.5 (.NET CLR 3.5.30729)\r\n"   // field 2
-        "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n"                                                     // field 3
-        "Accept-Language: en-us,en;q=0.5\r\n"                                                                                             // field 4
-        "Accept-Encoding: gzip,deflate\r\n"                                                                                               // field 5
-        "Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7\r\n"                                                                              // field 6
-        "Keep-Alive: 300\r\n"                                                                                                             // field 7
-        "Connection: keep-alive\r\n"                                                                                                      // field 8
-        "Cookie: PHPSESSID=r2t5uvjq435r4q7ib3vtdjq120\r\n"                                                                                // field 9
-        "Pragma: no-cache\r\n"                                                                                                            // field 10
-        "Cache-Control: no-cache\r\n";                                                                                                    // field 11
+        bool result;
+        std::string::const_iterator at;
+        std::tie(result, at) = parse_http_header (complete_header::text, header);
 
-    TEST_CASE("Передадим http-заголовок в текстовом виде парсеру ...") {
+        REQUIRE(result == true);
+        CHECK(at == complete_header::text.end());
 
-      SECTION("Результат теста парсера http заголовков ...") {
-        bool result = parse_http_header (header_text, header);
-        CHECK(result);
-      }
+        CHECK(header.method == complete_header::method);
+        CHECK(header.uri == complete_header::uri);
+        CHECK(header.http_version == complete_header::version);
 
-      SECTION("Проверим, получили ли мы метод (GET, POST, ...) "){
-        CHECK_FALSE(header.method.empty ());
-        CHECK(header.method == "GET");
-      }
+        REQUIRE(header.header_fields.size() == complete_header::key_value.size());
 
-      SECTION("Проверка наличия uri ..."){
-        CHECK_FALSE(header.uri.empty ());
-        CHECK(header.uri == "http://www.example.com:8080/path/to/file?query1=1&query2=2");
-      }
-
-      SECTION("Проверка версии http-протокола ..."){
-        CHECK_FALSE(header.http_version.empty ());
-        CHECK(header.http_version == "1.1");
-      }
-
-      SECTION("Проверка полей заголовка ...") {
-        http_request_header_type::field_map_type& fields = header.header_fields;
-
-        REQUIRE(fields.size () == 11);
-
-        for (size_t i = 0; i < field_list.size(); i++)
+        for (auto pair: header.header_fields)
         {
-          REQUIRE(fields.find (field_list[i]) != fields.end());
-          REQUIRE(fields[field_list[i]] == value_list[i]);
+          key_value_type::const_iterator it = complete_header::key_value.find(pair.first);
+          if (it != complete_header::key_value.end())
+            REQUIRE(pair.second == it->second);
+          else
+            FAIL("Header field \"" << pair.first << "\" not exists!");
+        }
+
+
+      }
+
+    }
+
+    TEST_CASE("Тестим парсер заголовков, alternative ", "[alternative]" ) {
+
+      http_request_header       header;
+      http_url_type             url;
+
+      SECTION("Результат парсинга, alternative") {
+        bool result;
+        std::string::const_iterator at;
+        std::tie(result, at) = http::parse_http_header (alternative_header::text, header);
+
+        REQUIRE(result == true);
+        CHECK(at == alternative_header::text.end());
+
+        CHECK(header.method == alternative_header::method);
+        CHECK(header.uri == alternative_header::uri);
+        CHECK(header.http_version == alternative_header::version);
+
+        REQUIRE(header.header_fields.size() == alternative_header::key_value.size());
+
+        for (auto pair: header.header_fields)
+        {
+          key_value_type::const_iterator it = alternative_header::key_value.find(pair.first);
+          if (it != alternative_header::key_value.end())
+            REQUIRE(pair.second == it->second);
+          else
+            FAIL("Header field \"" << pair.first << "\" not exists!");
         }
       }
-    } // TEST_CASE
 
-    TEST_CASE("Парсинг url-адреса ..."){
+    }
 
-      SECTION(""){
-        CHECK(parse_http_url (header.uri, url));
+    TEST_CASE("Тестим парсер заголовков, small ", "[small]" ) {
+
+      http_request_header       header;
+
+      SECTION("Результат парсинга, small") {
+        bool result;
+        std::string::const_iterator at;
+        std::tie(result, at) = parse_http_header (small_header::text, header);
+
+        REQUIRE(result == true);
+        CHECK(at == small_header::text.end());
+
+        CHECK(header.method == small_header::method);
+        CHECK(header.uri == small_header::uri);
+        CHECK(header.http_version == small_header::version);
+
+        REQUIRE(header.header_fields.size() == small_header::key_value.size());
+
+        for (auto pair: header.header_fields)
+        {
+          key_value_type::const_iterator it = small_header::key_value.find(pair.first);
+          if (it != small_header::key_value.end())
+            REQUIRE(pair.second == it->second);
+          else
+            FAIL("Header field \"" << pair.first << "\" not exists!");
+        }
       }
 
-      SECTION("Проверка полей url-структуры ...") {
-        CHECK(url.host == "www.example.com");
-        CHECK(url.path == "/path/to/file");
-        CHECK(url.port == "8080");
-        CHECK(url.query_map["query1"] == "1");
-        CHECK(url.query_map["query2"] == "2");
+    }
+
+    TEST_CASE("Тестим парсер заголовков, bad ", "[bad]" ) {
+
+      http_request_header       header;
+
+      SECTION("Результат парсинга, bad") {
+        bool result;
+        std::string::const_iterator at;
+        std::tie(result, at) = parse_http_header (bad_header::text, header);
+
+        REQUIRE(result == false);
+        CHECK(at == bad_header::text.begin());
       }
 
+    }
+
+    TEST_CASE("Тестим парсер заголовков, extra ", "[extra]" ) {
+
+      http_request_header       header;
+
+      SECTION("Результат парсинга, extra") {
+        bool result;
+        std::string::const_iterator at;
+        std::tie(result, at) = parse_http_header (extra_header::text, header);
+
+        REQUIRE(result == true);
+        CHECK(at == extra_header::at);
+        CHECK(header.method == extra_header::method);
+        CHECK(header.uri == extra_header::uri);
+        CHECK(header.http_version == extra_header::version);
+        REQUIRE(header.header_fields.size() == extra_header::key_value.size());
+
+        for (auto pair: header.header_fields)
+        {
+          key_value_type::const_iterator it = extra_header::key_value.find(pair.first);
+          if (it != extra_header::key_value.end())
+            REQUIRE(pair.second == it->second);
+          else
+            FAIL("Header field \"" << pair.first << "\" not exists!");
+        }
+      }
+    }
+
+    TEST_CASE("Тестим парсер заголовков, extra 1", "[extra 1]" ) {
+
+      http_request_header       header;
+
+      SECTION("Результат парсинга, extra 1") {
+        bool result;
+        std::string::const_iterator at;
+        std::tie(result, at) = parse_http_header (extra_header_1::text, header);
+
+        REQUIRE(result == true);
+        CHECK(at == extra_header_1::at);
+        CHECK(header.method == extra_header_1::method);
+        CHECK(header.uri == extra_header_1::uri);
+        CHECK(header.http_version == extra_header_1::version);
+        REQUIRE(header.header_fields.size() == extra_header_1::key_value.size());
+
+        for (auto pair: header.header_fields)
+        {
+          key_value_type::const_iterator it = extra_header_1::key_value.find(pair.first);
+          if (it != extra_header_1::key_value.end())
+            REQUIRE(pair.second == it->second);
+          else
+            FAIL("Header field \"" << pair.first << "\" not exists!");
+        }
+      }
     }
 
   } // namespace <http>

@@ -54,6 +54,9 @@ namespace server
       // [multithreading]
       unsigned int          thread_count;
 
+      // [static path]
+      std::string           root;
+
       void reset();      
     };
 

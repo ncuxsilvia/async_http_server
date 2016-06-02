@@ -218,10 +218,20 @@ namespace server {
 
         log::init_log(conf_.log_path, log::trivial::debug);
       }
-      else
-      {
+      else      
         std::cerr << "[error] '--log-path' is not exists or is not directory!";
+
+      if (fs::is_directory(conf_.root))
+      {
+        if (!conf_.root.empty())
+          while (*conf_.root.rbegin() == '/')
+          {
+            std::string::iterator last = std::prev(conf_.root.end());
+            conf_.root.erase(last, conf_.root.end());
+          }
       }
+      else
+        std::cerr << "[error] '--static-root' is not exists or is not directory!";
 
     }
 //  } // namespace <http>
