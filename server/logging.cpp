@@ -10,7 +10,7 @@
 #include <boost/log/utility/setup/common_attributes.hpp>
 #include <boost/log/sources/severity_logger.hpp>
 #include <boost/log/sources/record_ostream.hpp>
-
+#include <boost/log/attributes.hpp>
 #include "logging.hpp"
 
 namespace server {
@@ -71,5 +71,5 @@ namespace server {
 
       BOOST_LOG_TRIVIAL(debug) << "Logging subsystem initialized.";
     }
-  }
-}
+  } // namespace <log>
+} // namespace <server>

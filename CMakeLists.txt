@@ -37,8 +37,6 @@ find_package(
 
 include(add_module)
 
-set(PROJECT)
-
 set(
   CMAKE_ARCHIVE_OUTPUT_DIRECTORY  
     ${CMAKE_BINARY_DIR}/lib
@@ -70,6 +68,8 @@ add_module(
     http-header
   STATUS_SHORT_NAMES
 )
+
+
 
 add_module(
   CONDITION

@@ -78,7 +78,7 @@ namespace server
         desc.add_options()
             (
               "log-path,O",
-              po::value<std::string>(conf ? &conf->log_path : 0),
+              po::value<std::string>(conf ? &conf->log_path : 0)->default_value (conf ? conf->log_path : ""),
               "Path for log files (defuault is current directory)."
             )
             (
@@ -88,7 +88,7 @@ namespace server
             )
             (
               "listen-address,l",
-              po::value<std::string>(conf ? &conf->listen_addr : 0)->required (),
+              po::value<std::string>(conf ? &conf->listen_addr : 0)->default_value ("127.0.0.1"),
               "HTTP server listen address."
             )
             (
