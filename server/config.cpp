@@ -1,6 +1,8 @@
 #define BOOST_LOG_DYN_LINK
+
 #include <iostream>
 #include <exception>
+
 #include <boost/system/error_code.hpp>
 #include <boost/asio.hpp>
 #include <boost/program_options.hpp>
@@ -96,7 +98,7 @@ namespace server
             )
             (
               "port,p",
-              po::value<std::string>(conf ? &conf->listen_port : 0)->default_value(defaults::default_listen_port),
+              po::value<uint16_t>(conf ? &conf->listen_port : 0)->default_value(defaults::default_listen_port),
               "HTTP server listen port."
             )
             (
@@ -108,6 +110,11 @@ namespace server
               "static-root,s",
               po::value<std::string>(conf ? &conf->root : 0)->default_value(conf ? conf->log_path : ""),
               "Path to static files."
+            )
+            (
+              "keep-alive,k",
+              po::value<int>(conf ? &conf->keep_alive : 0)->default_value (defaults::default_keep_alive),
+              "Keep-alive timeout."
             );
 
         return desc;

@@ -65,7 +65,7 @@ set(SOURCE_INCLUDE
 add_module(
   NAMES
     server
-    http-header
+    http
   STATUS_SHORT_NAMES
 )
 

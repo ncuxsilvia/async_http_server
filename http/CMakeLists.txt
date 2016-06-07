@@ -1,9 +1,9 @@
-project(http-header)
+project(http)
 
 include(cxx11)
 include(enumfiles)
 
-set(TARGET http-header)
+set(TARGET http)
 
 enumfiles(HDRS "${PROJECT_SOURCE_DIR}" ".h;.hpp;.hxx")
 enumfiles(SRCS "${PROJECT_SOURCE_DIR}" ".cpp")

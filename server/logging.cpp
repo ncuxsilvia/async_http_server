@@ -11,6 +11,7 @@
 #include <boost/log/sources/severity_logger.hpp>
 #include <boost/log/sources/record_ostream.hpp>
 #include <boost/log/attributes.hpp>
+
 #include "logging.hpp"
 
 namespace server {
@@ -22,7 +23,6 @@ namespace server {
 
     void init_log(std::string path, trivial::severity_level lvl)
     {
-
       boost::log::add_common_attributes();
       boost::log::core::get()->add_global_attribute(
           "Scope", boost::log::attributes::named_scope()
@@ -41,8 +41,8 @@ namespace server {
       auto fmt_severity = expr::attr<boost::log::trivial::severity_level>("Severity");
       auto fmt_scope = expr::format_named_scope("Scope",
           boost::log::keywords::format = "%n(%f:%l)",
-          boost::log::keywords::iteration = boost::log::expressions::reverse,
-          boost::log::keywords::depth = 2);
+          boost::log::keywords::iteration = boost::log::expressions::forward,
+          boost::log::keywords::depth = 3);
 
       boost::log::formatter log_fmtr =
           expr::format("[%1%] (%2%) [%3%] [%4%] %5%")

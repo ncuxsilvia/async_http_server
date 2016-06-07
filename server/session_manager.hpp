@@ -2,6 +2,7 @@
 #define SESSION_MANAGER_HPP
 
 #include <set>
+#include <mutex>
 #include "session.hpp"
 
 namespace server {
@@ -22,6 +23,7 @@ namespace server {
 
     private:
       std::set<session::pointer> sessions_;
+      std::mutex                 mtx_;
     };
   } // namespace <http>
 } // namespace <server>

@@ -3,11 +3,16 @@
 
 #include <array>
 #include <memory>
+#include <mutex>
+
 #include <boost/asio.hpp>
 #include <boost/system/error_code.hpp>
-#include <boost/asio/deadline_timer.hpp>
 
-#include "http-header/http_header_parser.hpp"
+#include "config.hpp"
+#include "request_handler.hpp"
+#include "http/parser.hpp"
+#include "http/response.hpp"
+
 
 namespace server {
   namespace http {
@@ -15,9 +20,11 @@ namespace server {
     namespace asio    = boost::asio;
     namespace ph      = asio::placeholders;
 
-    typedef std::shared_ptr<std::ifstream> file_pointer;
+    const int buf_size = 65535; // 64 Kb
 
     class session_manager;
+    class request_parser;
+    class response;
 
     class session
       : public std::enable_shared_from_this<session>,
@@ -25,18 +32,21 @@ namespace server {
     {
     public:
       typedef std::shared_ptr<session> pointer;
-
+      friend class request_handler;
     public:
-//      session(const session&) = delete;
-//      session& operator=(const session&) = delete;
-
       explicit session(
           boost::asio::ip::tcp::socket socket,
-          session_manager& manager
+          session_manager& manager,
+          request_handler& handler,
+          config::settings& conf
       );
 
       void start();
       void stop();
+
+      void stop(
+        const system::error_code& ecode
+      );
 
     private:
       void do_read();
@@ -45,25 +55,58 @@ namespace server {
       // handlers
       void on_read(
         const system::error_code &ecode,
-        std::size_t byte_count
+        std::size_t bytes
       );
 
+      void on_write(
+        const system::error_code& ecode
+      );
 
+      void on_timer(
+        const system::error_code& ecode
+      );
+
+      void init_send_file();
+      void read_part();
+      void reset_file();
+
+      void on_send_part(
+        const system::error_code& ecode
+      );
+
+      void on_read_until(
+        const system::error_code& ecode,
+        std::size_t bytes_transferred
+      );
+
+      void set_timer();
+      void reset_timer();
+
+      std::string
+      connection_info();
 
     private:
-      typedef std::array<char, 16384> buffer_type;
+      typedef std::array<char, buf_size> buffer_type;
 
       boost::asio::ip::tcp::socket  socket_;
       session_manager&              session_manager_;
-      buffer_type                   buffer_;
-      file_pointer                  file_;
+      asio::streambuf               request_buffer_;
+      buffer_type                   response_buffer_;
 
+      request_handler&              handler_;
+      response                      response_;
+      request                       request_;
+
+      asio::io_service::strand      strand_;
       asio::deadline_timer          io_timer_;
 
+      config::settings&             conf_;
+
+      std::ifstream::pos_type       file_size_;
+      std::ifstream::pos_type       readed_bytes_;
+      file_pointer                  file_to_send_;
+
     };
-
-
-
   } // namespace <http>
 } // namespace <server>
 

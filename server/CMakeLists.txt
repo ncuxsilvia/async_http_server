@@ -27,16 +27,17 @@ target_link_libraries(
         ${Boost_LIBRARIES}
         ${CMAKE_THREAD_LIBS_INIT}
         -lstdc++
-        http-header
+        http
 )
 
-#if(UNIX)
-#  set_target_properties(
+#set_property(
+#  TARGET
 #    ${TARGET}
-#    PROPERTIES
-#      COMPILE_FLAGS "-std=c++11"
-#  )
-#endif()
+#  APPEND PROPERTY
+#    COMPILE_DEFINITIONS
+#    $<$<CONFIG:Debug>:BOOST_ASIO_ENABLE_SEQUENTIAL_STRAND_ALLOCATION=10000>
+#    $<$<CONFIG:Debug>:BOOST_ASIO_STRAND_IMPLEMENTATIONS=10000>
+#)
 
 enable_cxx11_support(${TARGET})
 

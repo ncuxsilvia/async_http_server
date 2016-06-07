@@ -18,7 +18,7 @@ add_executable(
 target_link_libraries(
   ${TARGET}
     -lstdc++
-    http-header
+    http
 )
 
 enable_cxx11_support(${TARGET})
