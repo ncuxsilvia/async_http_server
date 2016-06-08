@@ -10,9 +10,6 @@
 #include "config.hpp"
 #include "logging.hpp"
 
-
-
-
 namespace server {
   namespace po    = boost::program_options;
   namespace fs    = boost::filesystem;
