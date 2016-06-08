@@ -28,8 +28,6 @@ namespace server
     namespace defaults
     {
       static const severity_level default_log_level     = severity_level::info;
-      static const std::string    default_host_name     = "";
-      static const std::string    default_listen_addr   = "127.0.0.1";
       static const uint16_t       default_listen_port   = 8080;
       static const int            default_keep_alive    = 100;
       static const uint16_t       default_thread_count  = std::thread::hardware_concurrency();
@@ -46,8 +44,6 @@ namespace server
       severity_level        log_level;
 
       // [network]
-      std::string           host_name;      
-      std::string           listen_addr;
       uint16_t              listen_port;
       int                   keep_alive;
 

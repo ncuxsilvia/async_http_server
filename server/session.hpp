@@ -27,13 +27,20 @@ namespace server {
     class response;
 
     class session
-      : public std::enable_shared_from_this<session>,
-        boost::noncopyable
+      : public std::enable_shared_from_this<session>
     {
     public:
       typedef std::shared_ptr<session> pointer;
-      friend class request_handler;
+
+      struct connection_info{
+        std::string address;
+        uint16_t port = 0;
+      };
+
     public:
+      session(const session&) = delete;
+      session& operator=(const session&) = delete;
+
       explicit session(
           boost::asio::ip::tcp::socket socket,
           session_manager& manager,
@@ -44,15 +51,11 @@ namespace server {
       void start();
       void stop();
 
-      void stop(
-        const system::error_code& ecode
-      );
-
     private:
       void do_read();
       void do_write();
 
-      // handlers
+    private:
       void on_read(
         const system::error_code &ecode,
         std::size_t bytes
@@ -66,10 +69,6 @@ namespace server {
         const system::error_code& ecode
       );
 
-      void init_send_file();
-      void read_part();
-      void reset_file();
-
       void on_send_part(
         const system::error_code& ecode
       );
@@ -79,11 +78,12 @@ namespace server {
         std::size_t bytes_transferred
       );
 
+    private:
+      void init_send_file();
+      void read_part();
+      void reset_file();
       void set_timer();
       void reset_timer();
-
-      std::string
-      connection_info();
 
     private:
       typedef std::array<char, buf_size> buffer_type;
@@ -105,8 +105,10 @@ namespace server {
       std::ifstream::pos_type       file_size_;
       std::ifstream::pos_type       readed_bytes_;
       file_pointer                  file_to_send_;
+      connection_info               cinfo_;
 
     };
+
   } // namespace <http>
 } // namespace <server>
 

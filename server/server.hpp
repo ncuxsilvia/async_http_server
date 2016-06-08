@@ -14,17 +14,21 @@ namespace server {
   namespace asio    = boost::asio;
   namespace ip      = asio::ip;
 
-  class xserver : boost::noncopyable
+  class xserver
   {
   public:
     // main section
+    xserver(const xserver&) = delete;
+    xserver& operator=(const xserver&) = delete;
+
+    explicit
     xserver(config::string_array const& args);
 
-  static
+    static
     int main(int ac, char* av[]);
     int start();
 
-    // handlers section
+  private:
     void handle_accept(const system::error_code& ec);
     void handle_stop();
 

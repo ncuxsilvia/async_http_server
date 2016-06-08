@@ -9,11 +9,11 @@ namespace server {
   namespace http {
     namespace asio = boost::asio;
 
-    class session_manager : boost::noncopyable
+    class session_manager
     {
     public:
-//      session_manager(const session_manager&) = delete;
-//      session_manager& operator=(const session_manager&) = delete;
+      session_manager(const session_manager&) = delete;
+      session_manager& operator=(const session_manager&) = delete;
 
       session_manager();
 

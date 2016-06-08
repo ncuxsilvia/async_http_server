@@ -21,6 +21,16 @@ namespace server {
     using socket = asio::ip::tcp::socket;
     namespace time = boost::posix_time;
 
+    std::ostream& operator << (std::ostream& o, session::connection_info& c)
+    {
+      if (c.address.empty() && !c.port)
+        o << "(connection lost)";
+      else
+        o << "(" << c.address << ":" << c.port << ")";
+
+      return o;
+    }
+
     session::session(
         asio::ip::tcp::socket socket,
         session_manager& manager,
@@ -37,11 +47,25 @@ namespace server {
 
     void session::start()
     {
+      if (socket_.is_open ())
+      {
+        system::error_code e;
+        asio::ip::tcp::endpoint ep;
+        ep = socket_.remote_endpoint(e);
+        if (!e)
+        {
+          cinfo_.address = ep.address().to_string();
+          cinfo_.port    = ep.port();
+        }
+      }
+      BOOST_LOG_TRIVIAL(debug) << "connection start" << cinfo_;
       do_read ();
     }
 
     void session::stop()
     {
+      BOOST_LOG_TRIVIAL(debug) << "connection close" << cinfo_;
+      reset_file();
       io_timer_.cancel ();
       if (socket_.is_open ())
         socket_.close ();
@@ -70,7 +94,8 @@ namespace server {
     void session::do_write()
     {
       BOOST_LOG_TRIVIAL(debug) << "write response: " << response_.status ;
-      socket_.async_write_some(
+      asio::async_write(
+        socket_,
         asio::buffer(response_.merge()),
         strand_.wrap(
           boost::bind(
@@ -116,7 +141,8 @@ namespace server {
 
     void session::init_send_file()
     {
-      socket_.async_write_some(
+      asio::async_write(
+        socket_,
         asio::buffer(response_.merge ()),
         strand_.wrap(
           boost::bind(
@@ -138,7 +164,8 @@ namespace server {
         if (now_readed)
         {
           readed_bytes_ += now_readed;
-          socket_.async_write_some(
+          asio::async_write(
+            socket_,
             asio::buffer(response_buffer_, now_readed),
             strand_.wrap(
               boost::bind(
@@ -155,8 +182,11 @@ namespace server {
 
     void session::reset_file()
     {
-      if (!file_to_send_)
+      if (file_to_send_)
+      {
+        file_to_send_->close();
         file_to_send_.reset();
+      }
       file_size_ = 0;
       readed_bytes_ = 0;
     }
@@ -164,14 +194,12 @@ namespace server {
     void session::on_send_part(const system::error_code &ecode)
     {
       reset_timer();
+
       if (!ecode)
       {
-
         if (readed_bytes_ == file_size_)
         {
-            BOOST_LOG_TRIVIAL(debug)
-                << "file sended (ok) "
-                << connection_info ();
+            BOOST_LOG_TRIVIAL(debug) << "file sended (ok) " << cinfo_;
             reset_file();
 
             boost::system::error_code ignored_ec;
@@ -182,8 +210,7 @@ namespace server {
         else if (readed_bytes_ < file_size_)
         {
             BOOST_LOG_TRIVIAL(trace)
-                << "transferred " << readed_bytes_ << " of " << file_size_
-                << connection_info ();
+                << "transferred " << readed_bytes_ << " of " << file_size_ << cinfo_;
             read_part();
         }
         else {
@@ -192,9 +219,11 @@ namespace server {
       }
       else
       {
-        BOOST_LOG_TRIVIAL(error)
-            << "read request complete with error, reason:"
-            << ecode.message ();
+        if (ecode == asio::error::eof)
+          BOOST_LOG_TRIVIAL(error) << "connection was closed by client";
+        else
+          BOOST_LOG_TRIVIAL(error) << "some error: " << ecode.message () << cinfo_;
+
         session_manager_.stop (shared_from_this());
       }
     }
@@ -230,8 +259,7 @@ namespace server {
             }
             do_write();
           }
-
-          if (file_to_send_)
+          else if (file_to_send_)
           {
             file_size_ = file_to_send_->tellg();
             file_to_send_->seekg(0, std::ios::beg);
@@ -240,6 +268,7 @@ namespace server {
           else
           {
             response_ = response::default_response (internal_error);
+            BOOST_LOG_TRIVIAL(error) << err.message ();
             do_write();
           }
         }
@@ -250,11 +279,12 @@ namespace server {
         }
       }
       else {
+        if (ecode == asio::error::eof)
+        {
           BOOST_LOG_TRIVIAL(error)
-            << "read request complete with notice, warning:"
-            << ecode.message ();
-
-          session_manager_.stop (shared_from_this());
+            << "connection was closed by client";
+        }
+        session_manager_.stop (shared_from_this());
       }
     }
 
@@ -285,26 +315,5 @@ namespace server {
       if (conf_.keep_alive > 0)
         io_timer_.cancel();
     }
-
-    std::string session::connection_info()
-    {
-      std::string info = "(connection lost)";
-      if (socket_.is_open ())
-      {
-        info = "";
-        system::error_code ecode;
-        asio::ip::tcp::endpoint ep =  socket_.remote_endpoint(ecode);
-        if (!ecode)
-        {
-          info += "( ";
-          info += socket_.remote_endpoint().address().to_string();
-          info += ":";
-          info += std::to_string(socket_.remote_endpoint().port());
-          info += " )";
-        }
-      }
-      return info;
-    }
-
   } // namespace <http>
 } // namespace <server>

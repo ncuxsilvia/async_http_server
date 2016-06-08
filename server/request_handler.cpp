@@ -2,7 +2,6 @@
 #include <iostream>
 
 #include <boost/system/error_code.hpp>
-#include <boost/algorithm/string.hpp>
 
 #include "http/parser.hpp"
 #include "http/response.hpp"

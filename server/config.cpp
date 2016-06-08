@@ -59,10 +59,7 @@ namespace server
           std::cerr << "[error] :" << ec.message();
 
       }
-
       log_level = defaults::default_log_level;
-      host_name = defaults::default_host_name;
-      listen_addr = defaults::default_listen_addr;
       listen_port = defaults::default_listen_port;
       thread_count = defaults::default_thread_count;
     }
@@ -90,12 +87,7 @@ namespace server
               "log-level,L",
               po::value<severity_level>(conf ? &conf->log_level : 0)->default_value(defaults::default_log_level, "info"),
               "Logging level.\nPossible values: critical, error, warning, info, debug, trace."
-            )
-            (
-              "listen-address,l",
-              po::value<std::string>(conf ? &conf->listen_addr : 0)->default_value ("127.0.0.1"),
-              "HTTP server listen address."
-            )
+            )            
             (
               "port,p",
               po::value<uint16_t>(conf ? &conf->listen_port : 0)->default_value(defaults::default_listen_port),

@@ -1,16 +1,17 @@
 #define BOOST_LOG_DYN_LINK
+#include <utility>
 
 #include <boost/bind.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/thread.hpp>
-#include <utility>
+#include <boost/date_time/posix_time/posix_time.hpp>
 
 #include "server.hpp"
 #include "config.hpp"
 #include "logging.hpp"
 
 
-#include <boost/date_time/posix_time/posix_time.hpp>
+
 
 namespace server {
   namespace po    = boost::program_options;
@@ -47,7 +48,7 @@ namespace server {
         xserver srv(runopts);
         rcode = srv.start();
       }
-
+      BOOST_LOG_TRIVIAL(info) << "server stopped.";
       return rcode;
     }
     catch(std::exception const& ex)
@@ -67,7 +68,6 @@ namespace server {
   {
     // here may be put some code for forking (if necessary) ...
     int error = init();
-    BOOST_LOG_TRIVIAL(trace) << "start litening ...";
     if (!error) error = listen();
 
     if (error) return error;
@@ -99,8 +99,7 @@ namespace server {
     }
 
     if (!ecode)
-    {
-      BOOST_LOG_TRIVIAL(debug) << "connecting from " << socket_.remote_endpoint ().address ().to_string ();
+    {      
       manager_.start (
         std::make_shared<http::session> (
           std::move(socket_),
@@ -122,7 +121,7 @@ namespace server {
   void xserver::handle_stop()
   {
     manager_.stop_all();
-    std::cout << "[info] Server stopping..." << std::endl;
+    BOOST_LOG_TRIVIAL(info) << "server stopping ...";
     ios_.stop ();
   }
 
@@ -140,12 +139,6 @@ namespace server {
     system::error_code ecode;
 
     tcp::endpoint endpoint = tcp::endpoint(asio::ip::tcp::v4 (), conf_.listen_port);
-
-    if (ecode)
-    {
-      BOOST_LOG_TRIVIAL(error) << ecode.message();
-      return ecode.value();
-    }
 
     acceptor_.open(endpoint.protocol(), ecode);
     if (ecode)
@@ -174,7 +167,7 @@ namespace server {
       BOOST_LOG_TRIVIAL(error) << ecode.message();
       return ecode.value();
     }
-
+    BOOST_LOG_TRIVIAL(trace) << "start litening ...";
     return 0;
   }
 
@@ -207,12 +200,12 @@ namespace server {
     }
     catch(po::error const& ex)
     {
-      BOOST_LOG_TRIVIAL(fatal) << ex.what() << ".";
+      BOOST_LOG_TRIVIAL(fatal) << ex.what();
       return false;
     }
     catch(std::exception const& ex)
     {
-      BOOST_LOG_TRIVIAL(fatal) << ex.what();
+      BOOST_LOG_TRIVIAL(fatal) << "unknown error: " << ex.what();
       return false;
     }
 
@@ -242,4 +235,5 @@ namespace server {
       throw po::error("'--static-root' is not exists or is not directory!");
 
   }
+
 } // namespace <serevr>
